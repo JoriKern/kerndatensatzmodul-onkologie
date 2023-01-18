@@ -30,6 +30,8 @@ dependencies:
   #     id: mcode
   #     uri: http://hl7.org/fhir/us/mcode/ImplementationGuide/hl7.fhir.us.mcode
   #     version: 1.0.0
+  de.basisprofil.onkologie: 1.0.0-ballot
+  de.medizininformatikinitiative.kerndatensatz.diagnose: 2.0.0-alpha3
   de.medizininformatikinitiative.kerndatensatz.prozedur: 2.0.0-alpha5
   hl7.fhir.us.ctcae: 0.0.1
 #
