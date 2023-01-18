@@ -7,6 +7,13 @@ Title: "Radiotherapy"
 * category.coding[sct].code = #108290001 (exactly)
 // TODO: adjust `durchfuehrungsabsicht` to fit intent
 
+Profile: CancerRelatedSurgicalProcedure
+Parent: $mii-procedure
+Title: "Surgical Procedure"
+* performed[x] only dateTime
+* code.coding[ops].code from onko-ops-surgical-procedure (required)
+* category.coding[sct].code = #387713003 (exactly)
+// TODO: adjust `durchfuehrungsabsicht` to fit intent
 
 Instance: onko-radiotherapy-example
 InstanceOf: CancerRelatedRadiotherapy

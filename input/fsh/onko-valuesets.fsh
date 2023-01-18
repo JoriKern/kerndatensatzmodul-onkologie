@@ -4,6 +4,12 @@ Title: "OPS Radiotherapy"
 Description: "OPS-Codes specifying an oncological radiotherapies"
 * include codes from system $OPS where concept is-a #8-52
 
+ValueSet: OpsSurgicalProcedure
+Id: onko-ops-surgical-procedure
+Title: "OPS Surgical Procedure"
+Description: "OPS-Codes specifying surgical procedures"
+* include codes from system $OPS where concept is-a #5
+
 ValueSet: RadiotherapyTerminationReason
 Id: vs-onko-radiotherapy-termination-reason
 Title: "Radiotherapy Termination Reason"
