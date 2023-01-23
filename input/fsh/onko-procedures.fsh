@@ -1,20 +1,15 @@
-Profile: CancerRelatedProcedure
-Parent: $mii-procedure
-Id: sd-onko-cancer-related-procedure
-Title: "Cancer Related Procedure"
-* extension contains $CTCAE-Grade named sideEffect 0..1 MS
-
 Profile: CancerRelatedRadiotherapy
-Parent: sd-onko-cancer-related-procedure
+Parent: $mii-procedure
 Title: "Radiotherapy"
 * performed[x] only Period
 * code.coding[ops].code from onko-ops-radiationtherapy (required)
 * extension contains onko-radiotherapy-termination-reason named terminationReason 0..1 MS
+* extension contains $CTCAE-Grade named sideEffect 0..1 MS
 * category.coding[sct].code = #108290001 (exactly)
 // TODO: adjust `durchfuehrungsabsicht` to fit intent
 
 Profile: CancerRelatedSurgicalProcedure
-Parent: sd-onko-cancer-related-procedure
+Parent: $mii-procedure
 Title: "Surgical Procedure"
 * performed[x] only dateTime
 * code.coding[ops].code from onko-ops-surgical-procedure (required)
