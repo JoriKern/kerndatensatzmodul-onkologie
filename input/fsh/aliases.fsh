@@ -5,7 +5,7 @@ Alias: $TNMClassification = http://fhir.de/onkologie/StructureDefinition/uicc-tn
 Alias: $CTCAE-Grade = http://hl7.org/fhir/us/ctcae/StructureDefinition/ctcae-grade
 
 // MII Modules
-Alias: $mii-procedure = https://www.medizininformatik-initiative.de/fhir/core/modul-prozedur/StructureDefinition/Procedure
+Alias: $MIIProcedure = https://www.medizininformatik-initiative.de/fhir/core/modul-prozedur/StructureDefinition/Procedure
 Alias: $MIIDiagnose = https://www.medizininformatik-initiative.de/fhir/core/modul-diagnose/StructureDefinition/Diagnose
 
 // Code Systems

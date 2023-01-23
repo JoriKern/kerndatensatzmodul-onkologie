@@ -1,5 +1,5 @@
 Profile: CancerRelatedRadiotherapy
-Parent: $mii-procedure
+Parent: $MIIProcedure
 Title: "Radiotherapy"
 * performed[x] only Period
 * code.coding[ops].code from onko-ops-radiationtherapy (required)
@@ -9,7 +9,7 @@ Title: "Radiotherapy"
 // TODO: adjust `durchfuehrungsabsicht` to fit intent
 
 Profile: CancerRelatedSurgicalProcedure
-Parent: $mii-procedure
+Parent: $MIIProcedure
 Title: "Surgical Procedure"
 * performed[x] only dateTime
 * code.coding[ops].code from onko-ops-surgical-procedure (required)
