@@ -1,0 +1,403 @@
+@startuml Onco_Module
+skinparam linetype ortho
+left to right direction
+
+package US {
+
+  package CTCAE {
+
+    class CTCAEGrade {
+      Code : Code
+      Version : Code
+    }
+
+  }
+
+}
+
+package MII {
+
+  package Modul_Procedure {
+
+    class SD_MII_Prozedur_Procedure
+
+  }
+
+  package Modul_Diagnose {
+
+    class ProfileConditionDiagnose
+
+  }
+
+  package Modul_Medikation {
+
+    class MII_PR_Medikation_MedicationRequest
+    class MII_PR_Medikation_MedicationAdministration
+
+  }
+
+}
+
+package Modul_Onkologie {
+
+  class TNM_Classification << Observation >> {
+    Date : Date
+    Version : Code
+    # y_Symbol : Code
+    # r_Symbol : Code
+    # a_Symbol : Code
+    # T_Prefix : Code
+    # T_Code : Code
+    # m_Symbol : Code
+    # N_Prefix : Code
+    # N_Code : Code
+    # M_Prefix : Code
+    # M_Code : Code
+    # L_Descriptor : Code
+    # V_Descriptor : Code
+    # Pn_Descriptor : Code
+    # S_Symbol : Code
+    # UICC_State : Code
+  }
+
+  class KarnofskyPerformance << Observation >> {
+    Value : Code
+  }
+
+  class CancerDiagnosis << ProfileConditionDiagnose >> {
+
+  }
+  CancerDiagnosis "stage.assessment" --> "0..*" TNM_Classification
+  CancerDiagnosis "stage.assessment" --> "0..*" KarnofskyPerformance
+
+  class CancerRelatedRadiotherapy << SD_MII_Prozedur_Procedure >> {
+    # Intent : Code
+    Start : Date
+    End : Date
+    # Termination_Reason : Code
+    # Strahlenart : Code
+    # Dose : Dose
+    Anmerkung : String
+    # Zielgebiet : Code
+    # Seite_Zielgebiet : Code
+    # Applikationsart : Code
+    Einzeldosis_pro_Tag : Float
+  }
+  CancerRelatedRadiotherapy "reason" --> "0..*" CancerDiagnosis
+  CancerRelatedRadiotherapy "side_effect" --> CTCAEGrade
+
+  class CancerRelatedMedicationRequest << MII_PR_Medikation_MedicationRequest >> {
+    # Intent : Code
+    Medication : Medication
+    Begin : Date
+    End : Date
+    # Termination_Reason : Code
+    # Dose : Dose
+  }
+  CancerRelatedMedicationRequest "reason" --> "0..*" CancerDiagnosis
+
+  class CancerRelatedMedicationAdministration << MII_PR_Medikation_MedicationAdministration >> {
+    # Intent : Code
+    Medication : Medication
+    Date : Date
+    Dose : Dose
+  }
+  CancerRelatedMedicationAdministration "request" --> "0..*" CancerRelatedMedicationRequest
+  CancerRelatedMedicationAdministration "side_effect" --> CTCAEGrade
+
+  class CancerRelatedSurgicalProcedure << SD_MII_Prozedur_Procedure >> {
+    Intent : Code
+    OPS : Code
+    Complication : Code
+    Date : Date
+    Remark : String
+  }
+  CancerRelatedSurgicalProcedure "reason" --> "0..*" CancerDiagnosis
+
+}
+
+
+object Diagnose #DodgerBlue {
+  Tumor_ID : String
+  Primaertumor_ICD_Code : String
+  Primaertumor_ICD_Version : Catalog
+  Primaertumor_Diagnosetext : String
+  Primaertumor_Topographie_ICD_O : String
+  Primaertumor_Topographie_ICD_O_Version : Catalog
+  Primaertumor_Topographie_ICD_O_Freitext : String
+  Primaertumor_Diagnosedatum : Date
+  Primaertumor_Diagnosesicherung : Catalog
+  Seitenlokalisation : Catalog
+  Fruehere_Tumorerkrankung_ICD_Code: String
+  Fruehere_Tumorerkrankung_ICD_Version: Catalog
+  Fruehere_Tumorerkrankung_Freitext: String
+  Fruehere_Tumorerkrankung_Diagnosedatum : Date
+  Anmerkung : String
+}
+Diagnose --|> CancerDiagnosis
+
+class Allgemeiner_Leistungszustand #Coral
+Allgemeiner_Leistungszustand --|> KarnofskyPerformance
+
+class OP #LightCyan {
+  OP_ID : String
+}
+OP --|> CancerRelatedSurgicalProcedure
+
+
+class Strahlentherapie #LightCyan {
+  ID : String
+  Stellung_OP : Catalog
+  Boost: Catalog
+}
+Strahlentherapie --|> CancerRelatedRadiotherapy
+
+object Lokale_Interventionelle_Therapie #LightCyan {
+LIT_Art/Methode : Catalog
+LIT_Intention : Catalog
+LIT_Stellung_OP : Catalog
+LIT_Lokalisation : Catalog
+LIT_Zahl_Laesionen : Integer
+LIT_Komplikationen : String
+LIT_Datum : Date
+LIT_Weitere_Details : String
+LIT_Anmerkungen : String
+}
+
+
+object Nebenwirkungen_von_Strahlentherapie_oder_systemischer_Therapie #AliceBlue
+Nebenwirkungen_von_Strahlentherapie_oder_systemischer_Therapie --|> CTCAEGrade
+
+class Systemische_Therapie #LightCyan {
+  Stellung_zu_operativer_Therapie : Code
+  Art_der_systemischen_oder_abwartenden_Therapie : Code
+}
+Systemische_Therapie --|> CancerRelatedMedicationRequest
+
+object Verlauf #Bisque {
+  Verlauf_ID : String
+  Untersuchungsdatum_Verlauf : String
+  Gesamtbeurteilung_Tumorstatus : Catalog
+  Verlauf_Lokaler_Tumorstatus : Catalog
+  Verlauf_Tumorstatus_Lymphknoten : Catalog
+  Verlauf_Tumorstatus_Fernmetastasen : Catalog
+  Anmerkung : String
+}
+
+
+object Tumorkonferenz_Therapieplanung #Aqua {
+  Tumorkonferenz_ID : String
+  Tumorkonferenz_Datum : String
+  Tumorkonferenz_Typ : Catalog
+  Anmerkung : String
+}
+
+object Therapieempfehlung #Aqua {
+  Tumorkonferenz_Therapieempfehlung_Typ : Catalog
+  Tumorkonferenz/Therapieempfehlung_Therapieabweichung_auf_Wunsch_des_Patienten : Catalog
+}
+
+
+object Verknüpfung_Person_Todesursache #HotPink {
+  Sterbedatum : Date
+  Tod_tumorbedingt : Catalog
+  Todesursache_ICD_Version : Catalog
+  Todesursache_ICD : String
+}
+
+object Zusätzliche_Kontakte #HoneyDew {
+  Kontakt_Art : Catalog
+  Kontakt_Datum : Date
+  Kontakt_Status : Catalog
+}
+
+object Specimen #HotPink {
+
+  Identifikation : String
+  Ent-/Abnahmezeitpunkt : Date
+  Laboreingangszeitpunkt : Date
+  Probenart : Catalog
+  Körperstelle : Catalog
+  Kommentar : String
+  }
+
+  object Verknüpfung_Molpatho #HotPink{
+  ID Molpatho : String
+  }
+
+
+object Histologie #Coral {
+  Histologie_ID : String
+  Tumor_Histologiedatum : String
+  Histologie_EinsendeNr : String
+  Morphologie_Code : String
+  Morphologie_ICD_O_Version : Catalog
+  Morphologie_Freitext : String
+  Grading : Catalog
+  Anzahl_der_untersuchten_Lymphknoten : Integer
+  Anzahl_der_befallenen_Lymphknoten : Integer
+  Anzahl_der_untersuchten_Sentinel-Lymphknoten : Integer
+  Anzahl_der_befallenen_Sentinel-Lymphknoten : Integer
+  Befund : String
+}
+
+
+object TNM_Klassifikation #Coral {
+  ID : String
+}
+TNM_Klassifikation --|> TNM_Classification
+
+
+object Weitere_Klassifikation #Coral {
+  Hämatoonkologische_und_sonstige_Klassifikationen_Datum : Date
+  Hämatoonkologische_und_sonstige_Klassifikationen_Name : String
+  Hämatoonkologische_und_sonstige_Klassifikationen_Einstufung  : String
+}
+
+object Residualstatus #Coral {
+  Beurteilung_des_lokalen_Residualstatus_nach_Abschluss_der_Operation : Catalog
+  Gesamtbeurteilung_des_Residualstatus : Catalog
+}
+
+object Response #Coral {
+  Response auf Therapie : Catalog
+}
+
+
+object Fernmetastasen #Coral {
+  Datum_der_diagnostischen_Sicherung_von_Fernmetastasen  : String
+  Lokalisation_von_Fernmetastase(n)  : Catalog
+
+}
+
+object Genetische_Variante #Coral {
+
+  Genetische_Variante_Name : String
+  Genetische_Variante_Ausprägung : String
+
+}
+
+object Specimen #HotPink {
+
+  Identifikation : String
+  Ent-/Abnahmezeitpunkt : Date
+  Laboreingangszeitpunkt : Date
+  Probenart : Catalog
+  Körperstelle : Catalog
+  Kommentar : String
+
+}
+
+
+
+
+object Modul_Kolorektales_Karzinom #Coral {
+  RektumAbstandAnokutanlinie : String
+  RektumAbstandAboralerResektionsrand : String
+  RektumAbstandCircResektionsebene : String
+  RektumQualitaetTME : Catalog
+  RektumMRTDuennschichtAngabemesorektaleFaszie : String
+  ArtEingriff : Catalog
+  RektumAnzeichnungStomaposition : Catalog
+  GradRektumAnastomoseninsuffizienz : Catalog
+  ASA : Catalog
+  RASMutation : Catalog
+  Datum_des_Sozialdienstkontaktes : Date
+  Studienteilnahme : Catalog
+
+
+}
+
+
+object Modul_Malignes_Melanom #Coral {
+
+  Sicherheitsabstand_Primärtumor: Catalog
+  Tumordicke: Float
+  LDH: Integer
+  Ulzeration: Catalog
+}
+
+object Modul_Mammakarzinom #Coral {
+  Praetherapeutischer_Menopausenstatus : Catalog
+  HormonrezeptorStatus_Oestrogen : Catalog
+  HormonrezeptorStatus_Progesteron : Catalog
+  Her2neuStatus : Catalog
+  PraeopDrahtmarkierung : Catalog
+  IntraopPraeparatkontrolle : Catalog
+  TumorgroesseInvasiv : String
+  TumorgroesseDCIS : String
+}
+
+object Modul_Prostatakarzinom #Coral {
+  GleasonGradPrimaer : Catalog
+  GleasonGradSekundaer : Catalog
+  GleasonScoreErgebnis : Catalog
+  AnlassGleasonScore : Catalog
+  DatumStanzen : Date
+  AnzahlStanzen : Integer
+  AnzahlPosStanzen : Integer
+  Prozentzahl : Integer
+  U : Catalog
+  PSA : Float
+  DatumPSA : Date
+  KomplPostOP_ClavienDindo : Catalog
+
+}
+
+
+object Patienten_Stammdaten #Chocolate {
+  Patient_ID : String
+  KrankenversichertenNr : String
+  KrankenkassenNr : String
+  Patienten_Nachname : String
+  Patienten_Titel : String
+  Patienten_Namenszusatz : String
+  Patienten_Vornamen : String
+  Patienten_Geburtsname : String
+  Patienten_Frueherer_Name : String
+  Patienten_Geschlecht : Catalog
+  Patienten_Geburtsdatum : String
+  Patienten_Strasse : String
+  Patienten_Hausnummer : String
+  Patienten_Land : String
+  Patienten_PLZ : String
+  Patienten_Ort : String
+
+}
+
+Therapieempfehlung "0..*" -- Tumorkonferenz_Therapieplanung
+Verlauf "0..*" -- "1" Diagnose
+Allgemeiner_Leistungszustand "0..*" -- "1" Diagnose
+Allgemeiner_Leistungszustand "0..*" -- "1" Verlauf
+Specimen "0..*" -- "0..*" Verlauf
+Specimen "0..*" -- "1" Diagnose
+Specimen "0..*" -- "0..*" OP
+Specimen "0..*" -- "0..*" Histologie
+Specimen "0..*" -- "0..*" TNM_Klassifikation
+Histologie "0..*" -- "1" Diagnose
+Histologie "0..*" -- "1" Residualstatus
+TNM_Klassifikation "0..*" -- "1" Verlauf
+Histologie "0..*" -- "1" OP
+Histologie "0..*" -- "1" Lokale_Interventionelle_Therapie
+Histologie "0..*" -- "1" Verlauf
+Weitere_Klassifikation "0..*" -- "1" Diagnose
+Weitere_Klassifikation "0..*" -- "1" Verlauf
+Fernmetastasen "0..*" -- "1" Diagnose
+Fernmetastasen "0..*" -- "1" Verlauf
+Verknüpfung_Person_Todesursache "0..1" -- "1" Verlauf
+Residualstatus "0..1" -- "1" OP
+Residualstatus "0..1" -- "1" Strahlentherapie
+Residualstatus "0..1" -- "1" Systemische_Therapie
+Response "0..1" -- "1" Strahlentherapie
+Response "0..1" -- "1" Systemische_Therapie
+Response "0..1" -- "1" OP
+Response "0..1" -- "1" Lokale_Interventionelle_Therapie
+Tumorkonferenz_Therapieplanung "0..1" -- "1" Diagnose
+Genetische_Variante "0..*" -- "1" Diagnose
+Modul_Kolorektales_Karzinom "0..1" -- "1" Diagnose
+Modul_Malignes_Melanom "0..1" -- "1" Diagnose
+Modul_Mammakarzinom "0..1" -- "1" Diagnose
+Modul_Prostatakarzinom "0..1" -- "1" Diagnose
+Lokale_Interventionelle_Therapie "0..*" -- "1" Diagnose
+Genetische_Variante "1" -- "0..*" Verknüpfung_Molpatho
+@enduml
